@@ -1,0 +1,26 @@
+name: other-role
+category: ansible
+title: Demo role
+summary: A minimal role that exists only to test the catalog tool.
+tags:
+  - demo
+  - testing
+tools:
+  - name: ansible-core
+    version: "2.18.1"
+use_when:
+  - A test needs a template that passes every check.
+avoid_when:
+  - Anything outside the catalog tests.
+variables:
+  - name: demo_role_port
+    default: 8080
+    description: Port the demo service listens on.
+    where: defaults/main.yml
+practices:
+  - id: defaults-in-one-file
+    rule: Every variable has a default in defaults/main.yml.
+    why: There is one place to read and override them.
+checks:
+  - ansible-lint
+backs: Example item

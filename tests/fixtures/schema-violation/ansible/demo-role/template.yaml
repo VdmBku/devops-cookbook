@@ -1,0 +1,30 @@
+# Each block below breaks the schema in one way. The tests expect every one to be reported.
+name: demo-role
+category: ansible
+title: Demo role
+summary: A role whose metadata breaks the schema in several ways.
+# Typo: the field is called tags.
+tag:
+  - demo
+tools:
+  # Not a pinned version.
+  - name: ansible-core
+    version: latest
+  # Unquoted, so YAML reads it as the number 1.2.
+  - name: molecule
+    version: 1.20
+use_when:
+  - A test needs a template that fails the schema.
+avoid_when:
+  - Anything outside the catalog tests.
+variables:
+  - name: demo_role_port
+    default: 8080
+    description: Port the demo service listens on.
+    where: defaults/main.yml
+practices:
+  # The reason is missing.
+  - id: defaults-in-one-file
+    rule: Every variable has a default in defaults/main.yml.
+checks:
+  - ansible-lint

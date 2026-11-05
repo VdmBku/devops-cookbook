@@ -35,8 +35,12 @@ def add_template(root, category, name, **changes):
     return target
 
 
+def reverse_keys(mapping):
+    return dict(reversed(list(mapping.items())))
+
+
 def run(root, *args):
-    """Run the tool like the command line does and return (exit code, all output)."""
+    """Run the tool the way the command line does and return its exit code."""
     return catalog.main(["--root", str(root), *args])
 
 
@@ -151,17 +155,16 @@ def test_key_order_in_template_yaml_does_not_change_the_output(tmp_path):
 
     meta_path = root / "ansible" / "demo-role" / "template.yaml"
     meta = yaml.safe_load(meta_path.read_text(encoding="utf-8"))
-    reverse = lambda mapping: dict(reversed(list(mapping.items())))  # noqa: E731
-    meta = reverse(meta)
+    meta = reverse_keys(meta)
     for key in ("tools", "variables", "practices"):
-        meta[key] = [reverse(item) for item in meta[key]]
+        meta[key] = [reverse_keys(item) for item in meta[key]]
     meta_path.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
 
     assert run(root) == 0
     assert (root / "catalog.json").read_bytes() == expected
 
 
-def test_check_passes_when_the_files_are_current(tmp_path, capsys):
+def test_check_passes_when_the_files_are_current(tmp_path):
     root = fixture_root("valid", tmp_path)
     assert run(root) == 0
 

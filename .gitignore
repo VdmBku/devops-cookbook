@@ -1,0 +1,28 @@
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+
+# Python
+__pycache__/
+.venv/
+
+# Node
+node_modules/
+
+# Ansible and Molecule
+.cache/
+*.retry

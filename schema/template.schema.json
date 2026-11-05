@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/VdmBku/devops-cookbook/main/schema/template.schema.json",
+  "title": "devops-cookbook template",
+  "description": "Metadata of one template, stored in <category>/<template>/template.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "category",
+    "title",
+    "summary",
+    "tags",
+    "tools",
+    "use_when",
+    "avoid_when",
+    "variables",
+    "practices",
+    "checks"
+  ],
+  "properties": {
+    "name": {
+      "description": "Template folder name.",
+      "$ref": "#/$defs/slug"
+    },
+    "category": {
+      "description": "Category folder name, usually the main tool.",
+      "$ref": "#/$defs/slug"
+    },
+    "title": {
+      "description": "Short human-readable name.",
+      "$ref": "#/$defs/line",
+      "maxLength": 80
+    },
+    "summary": {
+      "description": "One sentence on what the template is.",
+      "$ref": "#/$defs/line",
+      "maxLength": 200
+    },
+    "tags": {
+      "description": "Keywords for search.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/slug" }
+    },
+    "tools": {
+      "description": "Tools the template is built and tested with, each at an exact version.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "version"],
+        "properties": {
+          "name": { "$ref": "#/$defs/line" },
+          "version": {
+            "description": "Exact version, quoted. No ranges, wildcards or 'latest'.",
+            "type": "string",
+            "pattern": "^v?[0-9]+(\\.[0-9]+)*([-+][0-9A-Za-z][0-9A-Za-z.+-]*)?$"
+          }
+        }
+      }
+    },
+    "use_when": {
+      "description": "Short phrases: situations the template fits.",
+      "$ref": "#/$defs/lines"
+    },
+    "avoid_when": {
+      "description": "Short phrases: situations where another approach is better.",
+      "$ref": "#/$defs/lines"
+    },
+    "variables": {
+      "description": "Every value meant to be changed. Anything not listed stays as it is.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "default", "description", "where"],
+        "properties": {
+          "name": {
+            "description": "Variable name as the tool spells it.",
+            "type": "string",
+            "pattern": "^\\S+$"
+          },
+          "default": {
+            "description": "Value the files use as they are. null only when the user has to supply it, such as a token."
+          },
+          "description": { "$ref": "#/$defs/line" },
+          "where": {
+            "description": "File that sets the variable, relative to the template's files/ folder.",
+            "type": "string",
+            "pattern": "^[^/\\\\\\s][^\\\\]*$"
+          }
+        }
+      }
+    },
+    "practices": {
+      "description": "Decisions the template follows. Keep them when applying the template.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "rule", "why"],
+        "properties": {
+          "id": {
+            "description": "Stable identifier, unique within the template.",
+            "$ref": "#/$defs/slug"
+          },
+          "rule": {
+            "description": "What the template does.",
+            "$ref": "#/$defs/line"
+          },
+          "why": {
+            "description": "Why it does it.",
+            "$ref": "#/$defs/line"
+          }
+        }
+      }
+    },
+    "checks": {
+      "description": "What CI verifies for this template.",
+      "$ref": "#/$defs/lines"
+    },
+    "backs": {
+      "description": "Profile 'Selected work' item this template supports.",
+      "$ref": "#/$defs/line"
+    }
+  },
+  "$defs": {
+    "slug": {
+      "description": "Lowercase letters and digits, words joined by single hyphens.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "line": {
+      "description": "Non-empty text on a single line.",
+      "type": "string",
+      "pattern": "^[^\\r\\n]*\\S[^\\r\\n]*$"
+    },
+    "lines": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/line" }
+    }
+  }
+}

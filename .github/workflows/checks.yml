@@ -1,0 +1,38 @@
+name: checks
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-24.04
+    env:
+      # The gitleaks hook only scans staged changes, so here it would scan nothing.
+      # The gitleaks job below scans the full history instead.
+      SKIP: gitleaks
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install pre-commit==4.7.0
+      - run: pre-commit run --all-files --show-diff-on-failure
+
+  gitleaks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Scan the full git history
+        run: >-
+          docker run --rm
+          -v "${{ github.workspace }}:/repo"
+          ghcr.io/gitleaks/gitleaks:v8.30.1
+          git /repo --redact --verbose --exit-code 1

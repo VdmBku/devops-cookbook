@@ -1,0 +1,48 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Keeps every pinned version current. Each update arrives as a pull request that is reviewed and merged by hand.",
+  "extends": ["config:recommended", "schedule:weekly"],
+  "automerge": false,
+  "minimumReleaseAge": "3 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
+  "ignorePaths": ["**/node_modules/**", "tests/fixtures/**"],
+  "pre-commit": {
+    "enabled": true
+  },
+  "github-actions": {
+    "managerFilePatterns": ["/^github-actions/[^/]+/files/.+\\.ya?ml$/"]
+  },
+  "kubernetes": {
+    "managerFilePatterns": ["/^kubernetes/[^/]+/(files|tests)/.+\\.ya?ml$/"]
+  },
+  "argocd": {
+    "managerFilePatterns": ["/^kubernetes/[^/]+/files/.+\\.ya?ml$/"]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Python packages pinned with == in workflow run steps.",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/",
+        "/^github-actions/[^/]+/files/.+\\.ya?ml$/"
+      ],
+      "matchStrings": ["pip install (?<depName>[A-Za-z0-9][A-Za-z0-9._-]*)==(?<currentValue>[0-9][^\\s\"']*)"],
+      "datasourceTemplate": "pypi"
+    },
+    {
+      "customType": "regex",
+      "description": "The gitleaks image in the checks workflow. Its tags follow the gitleaks GitHub releases, like the pre-commit hook.",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": ["ghcr\\.io/gitleaks/gitleaks:(?<currentValue>v[0-9]+\\.[0-9]+\\.[0-9]+)"],
+      "depNameTemplate": "gitleaks/gitleaks",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Tooling that builds and checks this repository, as opposed to the templates, goes in one pull request.",
+      "matchFileNames": [".github/workflows/**", ".pre-commit-config.yaml", "requirements-dev.txt"],
+      "groupName": "repository tooling"
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 # devops-cookbook
 
-Small, working examples of how I build delivery pipelines and infrastructure. Each one backs a line in the "Selected work" section of my [GitHub profile](https://github.com/VdmBku): the profile says what I did, the example shows how.
+My library of ready-to-use DevOps templates, sorted by tool. Take a template, change the variables it lists, apply it.
+
+Each template is a set of working files plus notes on the practices behind it: what was decided and why. That makes it a starting point for people, and a reference for AI coding assistants that should follow the same practices instead of guessing.
 
 Everything here is written from scratch for this repository. None of it comes from client or employer code.
 
-## How it's organized
-
-Each example lives in its own folder. Its README covers the problem, the approach, how to run it and what CI checks. Every example has its own workflow, so a green badge means that example passed, not just the repository as a whole.
+Templates are added one at a time. Each one has to pass its own checks in CI before it lands on `main`.
 
 ## Repository checks
 
@@ -19,4 +19,4 @@ Every push runs the pre-commit hooks and a gitleaks scan of the full git history
 
 ## License
 
-[MIT](LICENSE)
+[MIT No Attribution](LICENSE). Copy the templates into your own code without keeping a notice.
